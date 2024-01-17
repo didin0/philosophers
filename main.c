@@ -6,7 +6,7 @@
 /*   By: mabbadi <mabbadi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/12 23:03:42 by mabbadi           #+#    #+#             */
-/*   Updated: 2024/01/17 18:32:41 by mabbadi          ###   ########.fr       */
+/*   Updated: 2024/01/17 19:05:06 by mabbadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,15 @@ int	philo_fork(t_philo *philo)
 	return (0);
 }
 
+void philosophers_is_eating(t_philo *philosophers)
+{
+	print_message("is eating", philosophers);
+	pthread_mutex_lock(philosophers->mutex);
+	philosophers->last_meal = get_time() - philosophers->start_time;
+	philosophers->time_to_die = philosophers->last_meal + philosophers->time_to_die;
+	pthread_mutex_unlock(philosophers->mutex);
+}
+
 
 void *routinetest(void *arg)
 {
@@ -64,6 +73,7 @@ void *routinetest(void *arg)
 		philo_fork(philo);
 		philosophers_is_thinking(philo);
 		philosophers_is_sleeping(philo);
+		philosophers_is_eating(philo);
 		i++;
 	}
 	return (NULL);
