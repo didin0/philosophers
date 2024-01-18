@@ -6,7 +6,7 @@
 /*   By: mabbadi <mabbadi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 09:58:16 by mabbadi           #+#    #+#             */
-/*   Updated: 2024/01/17 18:30:26 by mabbadi          ###   ########.fr       */
+/*   Updated: 2024/01/19 00:03:12 by mabbadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,15 +47,15 @@ int	ft_atoi(const char *str)
 	return (sign * sum);
 }
 
-void	print_message(char *str, t_philo *philosopher)
+void	print_message(char *str, t_philo *philo)
 {
 	// printf("%d",*philosopher->dead_flag);
-	if (*philosopher->dead_flag == 0)
+	if (!dead(philo))
 	{
-		pthread_mutex_lock(philosopher->mutex);
-		printf("%d %d %s\n", get_time() - philosopher->start_time ,
-			(int)philosopher->id, str);
-		pthread_mutex_unlock(philosopher->mutex);
+		pthread_mutex_lock(philo->mutex);
+		printf("%d %d %s\n", get_time() - philo->start_time ,
+			(int)philo->id, str);
+		pthread_mutex_unlock(philo->mutex);
 	}
 }
 
@@ -67,12 +67,12 @@ int	get_time(void)
 	return ((t.tv_sec * 1000) + (t.tv_usec / 1000));
 }
 
-void	ft_sleep(int time, t_philo *philosophers)
+void	ft_sleep(int time, t_philo *philo)
 {
 	int start;
 
 	start = get_time();
 	while ((get_time() - start) < time
-		&& philosophers->dead_flag == 0)
+		&& dead(philo) == 0)
 		usleep(50);
 }
