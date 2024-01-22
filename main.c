@@ -5,121 +5,58 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mabbadi <mabbadi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/12 23:03:42 by mabbadi           #+#    #+#             */
-/*   Updated: 2024/01/19 00:27:28 by mabbadi          ###   ########.fr       */
+/*   Created: 2024/01/22 15:59:11 by mabbadi           #+#    #+#             */
+/*   Updated: 2024/01/22 16:26:39 by mabbadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-//////////////////////////////////////////////////////
 
-void	*monitoring(void *arg, t_philo *philo)
-{
-	t_data	*data;
-
-	data = (t_data *)arg;
-	while (1)
-	{
-		pthread_mutex_lock(&data->mutex);
-		if (dead(philo) == 0)
-		{
-			usleep(100);
-			return (pthread_mutex_unlock(&data->mutex), NULL);
-		}
-		pthread_mutex_unlock(&data->mutex);
-		usleep(200);
-	}
-}
-
-//////////////////////////////////////////////////////
-
-int	check_last_meal(t_philo *philo)
-{
-	if (get_time() - philo->start_time > philo->time_to_die)
-	{
-		philo[0].dead_flag = 1;
-		printf("%d %d died\n", get_time() - philo->start_time, philo->id);
-		return (0);
-	}
-	else
-		return (1);
-}
-
-int	hungry(t_philo *philo)
+int	check_arg_content(char *arg)
 {
 	int	i;
 
 	i = 0;
-	while (i < (*philo->number_of_philosophers))
+	while (arg[i] != '\0')
 	{
-		if (check_last_meal(&philo[i]) == 0)
-			return (0);
+		if (arg[i] < '0' || arg[i] > '9')
+			return (1);
 		i++;
 	}
-	return (1);
-}
-
-int dead(t_philo *philo)
-{
-	pthread_mutex_lock(philo->mutex);
-	if (philo->dead_flag == 1)
-	{
-		pthread_mutex_unlock(philo->mutex);
-		return (1);
-	}
-	pthread_mutex_unlock(philo->mutex);
 	return (0);
 }
 
-void *routinetest(void *arg)
+int	check_valid_args(char **argv)
 {
-	t_philo *philo;
-	philo = (t_philo *)arg;
-	while(philo->dead_flag == 0)
-	{
-		if (dead(philo))
-			return (0);
-		philo_fork(philo);
-		if (dead(philo))
-			return (0);
-		philosophers_is_eating(philo);
-		if (dead(philo))
-			return (0);
-		philosophers_is_sleeping(philo);
-		if (dead(philo))
-			return (0);
-		philosophers_is_thinking(philo);
-	}
-	return (NULL);
+	if (ft_atoi(argv[1]) > PHILO_MAX || ft_atoi(argv[1]) <= 0
+		|| check_arg_content(argv[1]) == 1)
+		return (write(2, "Invalid philosophers number\n", 29), 1);
+	if (ft_atoi(argv[2]) <= 0 || check_arg_content(argv[2]) == 1)
+		return (write(2, "Invalid time to die\n", 21), 1);
+	if (ft_atoi(argv[3]) <= 0 || check_arg_content(argv[3]) == 1)
+		return (write(2, "Invalid time to eat\n", 21), 1);
+	if (ft_atoi(argv[4]) <= 0 || check_arg_content(argv[4]) == 1)
+		return (write(2, "Invalid time to sleep\n", 23), 1);
+	if (argv[5] && (ft_atoi(argv[5]) < 0 || check_arg_content(argv[5]) == 1))
+		return (write(2, "Invalid number of times each philosopher must eat\n",
+				51), 1);
+	return (0);
 }
 
-void test(t_data *data, char **argv, t_philo *philo, pthread_mutex_t *fork)
+int	main(int argc, char **argv)
 {
-	init_data(data, argv, philo, fork);
-	int i = 0;
-	while( i < data->number_of_philosophers)
-	{
-		pthread_create(&philo[i].thread_id, NULL, (void *)&routinetest, &philo[i]);
-		i++;
-	}
-	i = 0;
-	while( i < data->number_of_philosophers)
-	{ 
-		pthread_join(philo[i].thread_id, NULL);
-		i++;
-	}
-	pthread_mutex_destroy(&data->mutex);
-}
+	t_program		program;
+	t_philo			philos[PHILO_MAX];
+	pthread_mutex_t	forks[PHILO_MAX];
 
-int	main(int argc, char *argv[])
-{
-	t_data			data;
-	t_philo			philo[250];
-	pthread_mutex_t	fork[250];
-
-	test(&data, argv, philo, fork);
-	monitoring(&data, philo);
-
-
+	if (argc != 5 && argc != 6)
+		return (write(2, "Wrong argument count\n", 22), 1);
+	if (check_valid_args(argv) == 1)
+		return (1);
+	init_program(&program, philos);
+	init_forks(forks, ft_atoi(argv[1]));
+	init_philos(philos, &program, forks, argv);
+	thread_create(&program, forks);
+	destroyer(NULL, &program, forks);
 	return (0);
 }

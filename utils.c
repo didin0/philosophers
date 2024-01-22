@@ -5,74 +5,84 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mabbadi <mabbadi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/15 09:58:16 by mabbadi           #+#    #+#             */
-/*   Updated: 2024/01/19 00:03:12 by mabbadi          ###   ########.fr       */
+/*   Created: 2024/01/22 16:11:46 by mabbadi           #+#    #+#             */
+/*   Updated: 2024/01/22 16:11:48 by mabbadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	ft_isdigit(int c)
+int	ft_strlen(char *str)
 {
-	if (c >= 48 && c <= 57)
-		return (1);
+	int	i;
+
+	if (str == NULL)
+		return (0);
+	i = 0;
+	while (str[i] != '\0')
+		i++;
+	return (i);
+}
+
+int	ft_atoi(char *str)
+{
+	unsigned long long	nb;
+	int					sign;
+	int					i;
+
+	nb = 0;
+	sign = 1;
+	i = 0;
+	while (str[i] == ' ' || str[i] == '\t' || str[i] == '\n' || str[i] == '\v'
+		|| str[i] == '\f' || str[i] == '\r')
+		i++;
+	if (str[i] == '-')
+		sign = -1;
+	if (str[i] == '-' || str[i] == '+')
+		i++;
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		nb = nb * 10 + (str[i] - '0');
+		i++;
+	}
+	return (sign * nb);
+}
+
+void	destroyer(char *str, t_program *program, pthread_mutex_t *forks)
+{
+	int	i;
+
+	i = 0;
+	if (str)
+	{
+		write(2, str, ft_strlen(str));
+		write(2, "\n", 1);
+	}
+	pthread_mutex_destroy(&program->print_mutex);
+	pthread_mutex_destroy(&program->eat_mutex);
+	pthread_mutex_destroy(&program->dead_mutex);
+	while (i < program->philos[0].num_of_philos)
+	{
+		pthread_mutex_destroy(&forks[i]);
+		i++;
+	}
+}
+
+int	ft_usleep(size_t milliseconds)
+{
+	size_t	start;
+
+	start = get_time();
+	while ((get_time() - start) < milliseconds)
+		usleep(500);
 	return (0);
 }
 
-int	ft_atoi(const char *str)
+size_t	get_time(void)
 {
-	long	sum;
-	int		sign;
-	int		i;
+	struct timeval	time;
 
-	i = 0;
-	sum = 0;
-	sign = 1;
-	while (*str == ' ' || *str == '\t' || *str == '\n' || *str == '\f'
-		|| *str == '\r' || *str == '\v')
-		str++;
-	if (*str == '-')
-		sign = -1;
-	if (*str == '-' || *str == '+')
-		str++;
-	while (*str && ft_isdigit(*str))
-	{
-		sum = sum * 10 + *str - '0';
-		if (sum < 0 && sign == 1)
-			return (-1);
-		if (sum < 0 && sign == -1)
-			return (0);
-		str++;
-	}
-	return (sign * sum);
-}
-
-void	print_message(char *str, t_philo *philo)
-{
-	// printf("%d",*philosopher->dead_flag);
-	if (!dead(philo))
-	{
-		pthread_mutex_lock(philo->mutex);
-		printf("%d %d %s\n", get_time() - philo->start_time ,
-			(int)philo->id, str);
-		pthread_mutex_unlock(philo->mutex);
-	}
-}
-
-int	get_time(void)
-{
-	static struct timeval	t;
-
-	gettimeofday(&t, NULL);
-	return ((t.tv_sec * 1000) + (t.tv_usec / 1000));
-}
-
-void	ft_sleep(int time, t_philo *philo)
-{
-	int start;
-
-	start = get_time();
-	while ((get_time() - start) < time
-		&& dead(philo) == 0)
-		usleep(50);
+	if (gettimeofday(&time, NULL) == -1)
+		write(2, "gettimeofday() error\n", 22);
+	return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }

@@ -6,73 +6,83 @@
 /*   By: mabbadi <mabbadi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/12 23:05:15 by mabbadi           #+#    #+#             */
-/*   Updated: 2024/01/19 00:25:13 by mabbadi          ###   ########.fr       */
+/*   Updated: 2024/01/22 16:08:24 by mabbadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
-
 # include <pthread.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <sys/time.h>
 # include <unistd.h>
 
+# define PHILO_MAX 300
+
 typedef struct s_philo
 {
-	int				dead_flag;
-	int		id;
-	int				last_meal;
-	int				is_eating;
-	int				time_to_die;
-	int				time_to_sleep;
-	int				time_to_eat;
-	int				*number_of_philosophers;
-	int				number_of_meals;
-	int				start_time;
-	pthread_t		thread_id;
-	struct s_data	*data;
-	pthread_mutex_t	*left_fork;
+	pthread_t		thread;
+	int				id;
+	int				eating;
+	int				meals_eaten;
+	size_t			last_meal;
+	size_t			time_to_die;
+	size_t			time_to_eat;
+	size_t			time_to_sleep;
+	size_t			start_time;
+	int				num_of_philos;
+	int				num_times_to_eat;
+	int				*dead_flag;
 	pthread_mutex_t	*right_fork;
-	pthread_mutex_t	*mutex;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*print_mutex;
+	pthread_mutex_t	*dead_mutex;
+	pthread_mutex_t	*eat_mutex;
 }					t_philo;
-
-typedef struct s_data
+typedef struct s_program
 {
-	int				number_of_philosophers;
-	int				time_to_die;
-	int				time_to_sleep;
-	int				time_to_eat;
-	int				number_of_meals;
 	int				dead_flag;
-	int				start_time;
-	pthread_mutex_t	fork;
-	pthread_mutex_t	mutex;
+	pthread_mutex_t	dead_mutex;
+	pthread_mutex_t	eat_mutex;
+	pthread_mutex_t	print_mutex;
 	t_philo			*philos;
-}					t_data;
+}					t_program;
 
-int					is_numeric(int count);
-int					string_is_numeric(char *str);
-int					all_arguments_are_numbers(char **argv);
-int					check_argument(int argc, char **argv);
-int					ft_atoi(const char *str);
-int					ft_isdigit(int c);
-void				init_philo(t_data *data, t_philo *philo,
-						pthread_mutex_t *fork);
-int					init_data(t_data *data, char **argv, t_philo *philo,
-						pthread_mutex_t *fork);
-void				ft_sleep(int time, t_philo *philosophers);
-int					get_time(void);
-void				print_message(char *str, t_philo *philosopher);
-void				*routine(void *arguments);
-void				philosophers_is_eating(t_philo *philosophers);
-void				philosophers_is_thinking(t_philo *philosophers);
-void				philosophers_is_sleeping(t_philo *philosophers);
-int					philo_fork(t_philo *philo);
-int dead(t_philo *philo);
-int	check_last_meal(t_philo *philo);
-int	hungry(t_philo *philo);
-int dead(t_philo *philo);
+// Main functions
+int					check_arg_content(char *arg);
+int					check_valid_args(char **argv);
+void				destroyer(char *str, t_program *program,
+						pthread_mutex_t *forks);
+
+// Initialization
+void				init_program(t_program *program, t_philo *philos);
+void				init_forks(pthread_mutex_t *forks, int philo_num);
+void				init_philos(t_philo *philos, t_program *program,
+						pthread_mutex_t *forks, char **argv);
+void				init_input(t_philo *philo, char **argv);
+
+// Threads
+int					thread_create(t_program *program, pthread_mutex_t *forks);
+void				*monitor(void *pointer);
+void				*routine(void *pointer);
+
+// Actions
+void				eating(t_philo *philo);
+void				sleeping(t_philo *philo);
+void				thinking(t_philo *philo);
+
+// Monitor utils
+int					dead(t_philo *philo);
+int					check_if_all_ate(t_philo *philos);
+int					check_if_dead(t_philo *philos);
+int					philosopher_dead(t_philo *philo, size_t time_to_die);
+
+// Utils
+int					ft_atoi(char *str);
+int					ft_usleep(size_t microseconds);
+int					ft_strlen(char *str);
+void				print_message(char *str, t_philo *philo, int id);
+size_t				get_time(void);
 
 #endif

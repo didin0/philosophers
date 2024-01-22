@@ -19,7 +19,7 @@ Purple= \033[035m
 
 SRCS = *.c
 
-
+DATARACE = -fsanitize=thread
 SILENT = --no-print-directory
 MAKE_SILENT = @make ${SILENT} -C
 COMPILE = cc ${SRCS} ${CFLAGS} -o
@@ -27,7 +27,7 @@ MAKE_MSG = @printf "\n\t    ${Purple}Makefile : ${RED}${NAME}${DEF}\n\n "
 
 NAME = philo
 DEBUG=  -fsanitize=address
-CFLAGS = -L. -g   -pthread #-Wall -Werror -Wextra 
+CFLAGS = -L. -g -pthread -Wall -Werror -Wextra $(DATARACE)
  
 
 ${NAME} : ${SRCS}
