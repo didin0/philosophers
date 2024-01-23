@@ -27,7 +27,7 @@ MAKE_MSG = @printf "\n\t    ${Purple}Makefile : ${RED}${NAME}${DEF}\n\n "
 
 NAME = philo
 DEBUG=  -fsanitize=address
-CFLAGS = -L. -g -pthread -Wall -Werror -Wextra $(DATARACE)
+CFLAGS = -L. -pthread -Wall -Werror -Wextra
  
 
 ${NAME} : ${SRCS}

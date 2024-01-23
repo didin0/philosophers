@@ -6,7 +6,7 @@
 /*   By: mabbadi <mabbadi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/14 19:11:15 by mabbadi           #+#    #+#             */
-/*   Updated: 2024/01/22 16:30:35 by mabbadi          ###   ########.fr       */
+/*   Updated: 2024/01/23 16:02:08 by mabbadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	*routine(void *pointer)
 
 	philo = (t_philo *)pointer;
 	if (philo->id % 2 == 0)
-		ft_usleep(1);
+		ft_usleep(philo->time_to_eat / 2);
 	while (!dead(philo))
 	{
 		eating(philo);

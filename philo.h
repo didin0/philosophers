@@ -6,7 +6,7 @@
 /*   By: mabbadi <mabbadi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/12 23:05:15 by mabbadi           #+#    #+#             */
-/*   Updated: 2024/01/22 16:08:24 by mabbadi          ###   ########.fr       */
+/*   Updated: 2024/01/23 16:45:05 by mabbadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int					check_if_dead(t_philo *philos);
 int					philosopher_dead(t_philo *philo, size_t time_to_die);
 
 // Utils
-int					ft_atoi(char *str);
+int					ft_atoi(const char *str);
 int					ft_usleep(size_t microseconds);
 int					ft_strlen(char *str);
 void				print_message(char *str, t_philo *philo, int id);

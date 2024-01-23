@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mabbadi <mabbadi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/11 22:22:47 by druina            #+#    #+#             */
-/*   Updated: 2024/01/22 16:29:12 by mabbadi          ###   ########.fr       */
+/*   Created: 2024/01/23 16:03:35 by mabbadi           #+#    #+#             */
+/*   Updated: 2024/01/23 16:51:19 by mabbadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,7 @@ void	print_message(char *str, t_philo *philo, int id)
 int	philosopher_dead(t_philo *philo, size_t time_to_die)
 {
 	pthread_mutex_lock(philo->eat_mutex);
-	if (get_time() - philo->last_meal >= time_to_die
-		&& philo->eating == 0)
+	if (get_time() - philo->last_meal >= time_to_die && philo->eating == 0)
 		return (pthread_mutex_unlock(philo->eat_mutex), 1);
 	pthread_mutex_unlock(philo->eat_mutex);
 	return (0);
@@ -88,7 +87,10 @@ void	*monitor(void *pointer)
 
 	philos = (t_philo *)pointer;
 	while (1)
+	{
+		ft_usleep(1);
 		if (check_if_dead(philos) == 1 || check_if_all_ate(philos) == 1)
 			break ;
+	}
 	return (pointer);
 }
