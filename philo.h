@@ -6,7 +6,7 @@
 /*   By: mabbadi <mabbadi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/12 23:05:15 by mabbadi           #+#    #+#             */
-/*   Updated: 2024/01/23 16:45:05 by mabbadi          ###   ########.fr       */
+/*   Updated: 2024/02/07 18:50:14 by mabbadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void				*monitor(void *pointer);
 void				*routine(void *pointer);
 
 // Actions
-void				eating(t_philo *philo);
+int					eating(t_philo *philo);
 void				sleeping(t_philo *philo);
 void				thinking(t_philo *philo);
 

@@ -6,7 +6,7 @@
 /*   By: mabbadi <mabbadi@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/23 16:03:35 by mabbadi           #+#    #+#             */
-/*   Updated: 2024/01/23 16:51:19 by mabbadi          ###   ########.fr       */
+/*   Updated: 2024/02/07 19:03:11 by mabbadi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,6 @@ int	check_if_all_ate(t_philo *philos)
 	}
 	return (0);
 }
-
-// Monitor thread routine
 
 void	*monitor(void *pointer)
 {
